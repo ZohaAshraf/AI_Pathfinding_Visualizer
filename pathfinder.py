@@ -14,16 +14,16 @@ import sys
 
 # Color scheme for professional GUI
 COLORS = {
-    'background': (240, 240, 245),
-    'grid_line': (200, 200, 210),
-    'empty': (255, 255, 255),
-    'wall': (50, 50, 50),
-    'start': (66, 133, 244),  # Blue
-    'target': (52, 168, 83),  # Green
-    'frontier': (251, 188, 5),  # Yellow/Gold
-    'explored': (234, 67, 53),  # Red
-    'path': (156, 39, 176),  # Purple
-    'dynamic_obstacle': (255, 87, 34),  # Deep Orange
+    'background': (240, 240, 245),  # Light gray background
+    'grid_line': (200, 200, 210),   # Subtle grid lines
+    'empty': (255, 255, 255),       # White for empty cells
+    'wall': (50, 50, 50),           # Dark gray for obstacles
+    'start': (66, 133, 244),        # Google Blue for start
+    'target': (52, 168, 83),        # Google Green for target
+    'frontier': (251, 188, 5),      # Yellow for checking
+    'explored': (234, 67, 53),      # Red for visited
+    'path': (156, 39, 176),          # Purple for solution
+    'dynamic_obstacle': (255, 87, 34),   # Orange for dynamic
     'text': (33, 33, 33),
     'panel': (250, 250, 252)
 }
