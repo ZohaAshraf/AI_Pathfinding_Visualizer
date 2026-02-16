@@ -143,3 +143,8 @@ if __name__ == "__main__":
             print("Invalid choice")
     else:
         print("Invalid choice")
+  # Additional Test Scenarios
+   # - Empty grid test
+   # - Dense obstacle test
+   # - Impossible path test
+   # - Large grid test (30x30)
