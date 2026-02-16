@@ -367,5 +367,10 @@ For questions or issues:
 - ✅ GitHub ready with commit history
 
 ---
-
+## Version History
+   - v1.0 - Initial release with all 6 algorithms
+```
+5. **Scroll down to "Commit changes"**
+6. **Write commit message:**
+```
 **End of README**
