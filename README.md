@@ -261,9 +261,7 @@ When expanding nodes, neighbors are added in this order:
    
    *Optimal for unweighted graphs
 ```
-3. **Commit message:**
-```
-   Add comprehensive algorithm complexity table
+
 
 ## 🐛 Known Limitations
 
