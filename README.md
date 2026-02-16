@@ -387,4 +387,19 @@ For questions or issues:
 5. **Scroll down to "Commit changes"**
 6. **Write commit message:**
 ```
+## Troubleshooting
+   
+   ### Issue: "No module named pygame"
+   **Solution:** Run `pip install pygame`
+   
+   ### Issue: Window closes immediately  
+   **Solution:** Run from command prompt, not double-click
+   
+   ### Issue: Program runs but no window appears
+   **Solution:** Check if pygame installed correctly: `pip list | grep pygame`
+   
+   ### Issue: Animation too fast/slow
+   **Solution:** Modify `ANIMATION_DELAY` in pathfinder.py (line 30)
+```
+
 **End of README**
