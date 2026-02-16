@@ -107,6 +107,7 @@ run_algorithm(BFS, env)
   - 🟣 Purple = Final Path
   - 🟠 Orange = Dynamic Obstacle
 
+
 ---
 
 ## 📊 Configuration
