@@ -326,7 +326,7 @@ DYNAMIC_OBSTACLE_PROBABILITY = 0.01  # 1% instead of 0.2%
 
 ## 👨‍💻 Author
 
-**Student ID**: 22F-XXXX  
+**Student ID**: 24F-3019
 **Course**: AI 2002 - Artificial Intelligence  
 **Semester**: Spring 2026
 
