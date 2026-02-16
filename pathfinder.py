@@ -340,7 +340,12 @@ class DFS(SearchAlgorithm):
 
 class UCS(SearchAlgorithm):
     """Uniform-Cost Search implementation"""
-    
+       """
+       Uniform-Cost Search implementation
+       Uses priority queue for cost-based exploration
+       Considers diagonal moves cost more (14 vs 10)
+       Time Complexity: O(E log V)
+       """
     def __init__(self, environment: GridEnvironment, visualizer: 'Visualizer'):
         super().__init__(environment, visualizer)
         self.algorithm_name = "Uniform-Cost Search (UCS)"
