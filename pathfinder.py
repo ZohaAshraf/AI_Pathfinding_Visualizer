@@ -282,7 +282,12 @@ class BFS(SearchAlgorithm):
 
 class DFS(SearchAlgorithm):
     """Depth-First Search implementation"""
-    
+     """
+       Depth-First Search implementation
+       Uses LIFO stack for deep exploration
+       Time Complexity: O(V + E)
+       Space Complexity: O(h) where h is max depth
+       """
     def __init__(self, environment: GridEnvironment, visualizer: 'Visualizer'):
         super().__init__(environment, visualizer)
         self.algorithm_name = "Depth-First Search (DFS)"
