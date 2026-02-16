@@ -248,6 +248,22 @@ When expanding nodes, neighbors are added in this order:
 - **Bidirectional**: Paths don't meet until exploring most of grid
 
 ---
+## Algorithm Complexity Analysis
+   
+   | Algorithm | Time | Space | Complete | Optimal |
+   |-----------|------|-------|----------|---------|
+   | BFS       | O(V+E) | O(V) | Yes | Yes* |
+   | DFS       | O(V+E) | O(h) | No | No |
+   | UCS       | O(E log V) | O(V) | Yes | Yes |
+   | DLS       | O(b^l) | O(l) | No | No |
+   | IDDFS     | O(b^d) | O(d) | Yes | Yes* |
+   | Bidirectional | O(b^(d/2)) | O(b^(d/2)) | Yes | Yes* |
+   
+   *Optimal for unweighted graphs
+```
+3. **Commit message:**
+```
+   Add comprehensive algorithm complexity table
 
 ## 🐛 Known Limitations
 
