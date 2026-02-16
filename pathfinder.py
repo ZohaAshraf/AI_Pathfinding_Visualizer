@@ -225,7 +225,12 @@ class SearchAlgorithm:
 
 class BFS(SearchAlgorithm):
     """Breadth-First Search implementation"""
-    
+     """
+       Breadth-First Search implementation
+       Uses FIFO queue for level-by-level exploration
+       Time Complexity: O(V + E)
+       Space Complexity: O(V)
+       """
     def __init__(self, environment: GridEnvironment, visualizer: 'Visualizer'):
         super().__init__(environment, visualizer)
         self.algorithm_name = "Breadth-First Search (BFS)"
