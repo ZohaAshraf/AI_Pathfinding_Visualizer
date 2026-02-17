@@ -1,6 +1,6 @@
 """
 AI Pathfinder - Uninformed Search Algorithms Visualizer
-Academic Assignment: Grid-based pathfinding with dynamic obstacles
+Academic Assignment: Grid-based pathfinding with static obstacles
 Author: Student Implementation
 """
 
@@ -8,22 +8,22 @@ import pygame
 import time
 from collections import deque
 from queue import PriorityQueue
-import random
+
 from typing import List, Tuple, Set, Optional, Dict
 import sys
 
 # Color scheme for professional GUI
 COLORS = {
-    'background': (240, 240, 245),  # Light gray background
-    'grid_line': (200, 200, 210),   # Subtle grid lines
-    'empty': (255, 255, 255),       # White for empty cells
-    'wall': (50, 50, 50),           # Dark gray for obstacles
-    'start': (66, 133, 244),        # Google Blue for start
-    'target': (52, 168, 83),        # Google Green for target
-    'frontier': (251, 188, 5),      # Yellow for checking
-    'explored': (234, 67, 53),      # Red for visited
-    'path': (156, 39, 176),          # Purple for solution
-    'dynamic_obstacle': (255, 87, 34),   # Orange for dynamic
+    'background': (240, 240, 245),
+    'grid_line': (200, 200, 210),
+    'empty': (255, 255, 255),
+    'wall': (50, 50, 50),
+    'start': (66, 133, 244),  # Blue
+    'target': (52, 168, 83),  # Green
+    'frontier': (251, 188, 5),  # Yellow/Gold
+    'explored': (234, 67, 53),  # Red
+    'path': (156, 39, 176),  # Purple
+    'message_color': (255, 87, 34),  # Orange - used for status messages
     'text': (33, 33, 33),
     'panel': (250, 250, 252)
 }
@@ -39,8 +39,7 @@ WINDOW_HEIGHT = GRID_SIZE * (CELL_SIZE + MARGIN) + MARGIN + 100
 # Search animation speed (milliseconds)
 ANIMATION_DELAY = 50
 
-# Dynamic obstacle probability (per step)
-DYNAMIC_OBSTACLE_PROBABILITY = 0.002
+# Static grid environment only
 
 
 class Node:
@@ -71,7 +70,7 @@ class Node:
 
 
 class GridEnvironment:
-    """Manages the grid environment with static and dynamic obstacles"""
+    """Manages the grid environment with static walls"""
     
     def __init__(self, size: int = GRID_SIZE):
         self.size = size
@@ -79,7 +78,6 @@ class GridEnvironment:
         self.start: Optional[Tuple[int, int]] = None
         self.target: Optional[Tuple[int, int]] = None
         self.static_walls: Set[Tuple[int, int]] = set()
-        self.dynamic_obstacles: Set[Tuple[int, int]] = set()
         
     def set_start(self, row: int, col: int):
         """Set the start position"""
@@ -94,24 +92,12 @@ class GridEnvironment:
         if (row, col) != self.start and (row, col) != self.target:
             self.static_walls.add((row, col))
             
-    def add_dynamic_obstacle(self, row: int, col: int):
-        """Add a dynamic obstacle during runtime"""
-        if (row, col) not in self.static_walls and \
-           (row, col) != self.start and \
-           (row, col) != self.target:
-            self.dynamic_obstacles.add((row, col))
-            return True
-        return False
     
-    def remove_dynamic_obstacle(self, row: int, col: int):
-        """Remove a dynamic obstacle"""
-        self.dynamic_obstacles.discard((row, col))
-        
     def is_valid_position(self, row: int, col: int) -> bool:
         """Check if a position is valid and not blocked"""
         if row < 0 or row >= self.size or col < 0 or col >= self.size:
             return False
-        if (row, col) in self.static_walls or (row, col) in self.dynamic_obstacles:
+        if (row, col) in self.static_walls:
             return False
         return True
     
@@ -146,23 +132,6 @@ class GridEnvironment:
         
         return neighbors
     
-    def spawn_dynamic_obstacle(self) -> Optional[Tuple[int, int]]:
-        """Randomly spawn a dynamic obstacle"""
-        if random.random() < DYNAMIC_OBSTACLE_PROBABILITY:
-            # Find empty cells
-            empty_cells = []
-            for row in range(self.size):
-                for col in range(self.size):
-                    if self.is_valid_position(row, col) and \
-                       (row, col) != self.start and \
-                       (row, col) != self.target:
-                        empty_cells.append((row, col))
-            
-            if empty_cells:
-                obstacle_pos = random.choice(empty_cells)
-                self.add_dynamic_obstacle(*obstacle_pos)
-                return obstacle_pos
-        return None
     
     def create_sample_maze(self):
         """Create a sample maze with walls"""
@@ -201,23 +170,6 @@ class SearchAlgorithm:
             current = current.parent
         return path[::-1]
     
-    def check_dynamic_obstacle_on_path(self, path: List[Tuple[int, int]]) -> bool:
-        """Check if a dynamic obstacle appeared on the planned path"""
-        for pos in path:
-            if pos in self.env.dynamic_obstacles:
-                return True
-        return False
-    
-    def handle_dynamic_obstacle(self):
-        """Handle dynamic obstacle spawn"""
-        obstacle_pos = self.env.spawn_dynamic_obstacle()
-        if obstacle_pos:
-            # Check if it blocks current path
-            if obstacle_pos in self.path:
-                # Need to re-plan!
-                return True
-        return False
-    
     def search(self) -> bool:
         """To be implemented by subclasses"""
         raise NotImplementedError
@@ -225,12 +177,7 @@ class SearchAlgorithm:
 
 class BFS(SearchAlgorithm):
     """Breadth-First Search implementation"""
-     """
-       Breadth-First Search implementation
-       Uses FIFO queue for level-by-level exploration
-       Time Complexity: O(V + E)
-       Space Complexity: O(V)
-       """
+    
     def __init__(self, environment: GridEnvironment, visualizer: 'Visualizer'):
         super().__init__(environment, visualizer)
         self.algorithm_name = "Breadth-First Search (BFS)"
@@ -247,11 +194,6 @@ class BFS(SearchAlgorithm):
         visited = {self.env.start}
         
         while queue and self.is_running:
-            # Handle dynamic obstacles
-            if self.handle_dynamic_obstacle():
-                self.visualizer.show_message("Dynamic obstacle detected! Re-planning...")
-                return self.search()  # Restart search
-            
             current = queue.popleft()
             current_pos = current.get_position()
             
@@ -282,12 +224,7 @@ class BFS(SearchAlgorithm):
 
 class DFS(SearchAlgorithm):
     """Depth-First Search implementation"""
-     """
-       Depth-First Search implementation
-       Uses LIFO stack for deep exploration
-       Time Complexity: O(V + E)
-       Space Complexity: O(h) where h is max depth
-       """
+    
     def __init__(self, environment: GridEnvironment, visualizer: 'Visualizer'):
         super().__init__(environment, visualizer)
         self.algorithm_name = "Depth-First Search (DFS)"
@@ -304,11 +241,6 @@ class DFS(SearchAlgorithm):
         visited = {self.env.start}
         
         while stack and self.is_running:
-            # Handle dynamic obstacles
-            if self.handle_dynamic_obstacle():
-                self.visualizer.show_message("Dynamic obstacle detected! Re-planning...")
-                return self.search()
-            
             current = stack.pop()
             current_pos = current.get_position()
             
@@ -340,12 +272,7 @@ class DFS(SearchAlgorithm):
 
 class UCS(SearchAlgorithm):
     """Uniform-Cost Search implementation"""
-       """
-       Uniform-Cost Search implementation
-       Uses priority queue for cost-based exploration
-       Considers diagonal moves cost more (14 vs 10)
-       Time Complexity: O(E log V)
-       """
+    
     def __init__(self, environment: GridEnvironment, visualizer: 'Visualizer'):
         super().__init__(environment, visualizer)
         self.algorithm_name = "Uniform-Cost Search (UCS)"
@@ -364,11 +291,6 @@ class UCS(SearchAlgorithm):
         cost_so_far = {self.env.start: 0}
         
         while not pq.empty() and self.is_running:
-            # Handle dynamic obstacles
-            if self.handle_dynamic_obstacle():
-                self.visualizer.show_message("Dynamic obstacle detected! Re-planning...")
-                return self.search()
-            
             _, _, current = pq.get()
             current_pos = current.get_position()
             
@@ -417,10 +339,6 @@ class DLS(SearchAlgorithm):
                       depth: int, visited: Set[Tuple[int, int]]) -> Optional[Node]:
         """Recursive DLS helper"""
         if not self.is_running:
-            return None
-        
-        # Handle dynamic obstacles
-        if self.handle_dynamic_obstacle():
             return None
         
         node_pos = node.get_position()
@@ -491,10 +409,6 @@ class IDDFS(SearchAlgorithm):
         visited = {self.env.start}
         
         while stack and self.is_running:
-            # Handle dynamic obstacles
-            if self.handle_dynamic_obstacle():
-                return None
-            
             current, depth = stack.pop()
             current_pos = current.get_position()
             
@@ -568,11 +482,6 @@ class BidirectionalSearch(SearchAlgorithm):
         backward_visited = {self.env.target: target_node}
         
         while (forward_queue or backward_queue) and self.is_running:
-            # Handle dynamic obstacles
-            if self.handle_dynamic_obstacle():
-                self.visualizer.show_message("Dynamic obstacle detected! Re-planning...")
-                return self.search()
-            
             # Forward step
             if forward_queue:
                 current_forward = forward_queue.popleft()
@@ -657,8 +566,6 @@ class Visualizer:
                 pos = (row, col)
                 if pos in self.env.static_walls:
                     color = COLORS['wall']
-                elif pos in self.env.dynamic_obstacles:
-                    color = COLORS['dynamic_obstacle']
                 elif pos == self.env.start:
                     color = COLORS['start']
                 elif pos == self.env.target:
@@ -769,7 +676,6 @@ class Visualizer:
             ("Frontier", COLORS['frontier']),
             ("Explored", COLORS['explored']),
             ("Path", COLORS['path']),
-            ("Dynamic Obstacle", COLORS['dynamic_obstacle']),
         ]
         
         for label, color in legend_items:
@@ -781,7 +687,7 @@ class Visualizer:
         # Message display
         if self.message and time.time() - self.message_time < 3:
             panel_y += 20
-            msg = self.message_font.render(self.message, True, COLORS['dynamic_obstacle'])
+            msg = self.message_font.render(self.message, True, COLORS['message_color'])
             self.screen.blit(msg, (panel_x, panel_y))
     
     def update_display(self, algorithm: SearchAlgorithm):
