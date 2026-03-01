@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/3d2e2abe-7524-430d-abb1-5dd1e6be6c78
+
 # AI Pathfinder - Uninformed Search Algorithms Visualizer
 
 ## 🎯 Project Overview
